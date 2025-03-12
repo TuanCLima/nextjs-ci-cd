@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GLOBAL_VAR: "This is a global variable"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +25,11 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: latest
+
+      - name: Log variables
+        run: |
+          echo "My global var: ${{ env.GLOBAL_VAR }}"
+          echo "My remote var: ${{ vars.TEST_VAR }}"
 
       - name: Setup pnpm cache
         uses: actions/cache@v3
