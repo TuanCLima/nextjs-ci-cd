@@ -1,26 +1,16 @@
-# Use the official Node.js 16 image as the base image
-FROM node:16
-
-# Set the working directory
+FROM node:22-alpine AS build
 WORKDIR /app
-
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Copy package.json and pnpm-lock.yaml (if it exists)
-COPY package.json pnpm-lock.yaml* ./
-
-# Install dependencies using pnpm
-RUN pnpm install
-
-# Copy the rest of the application code
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# Build the Next.js application
-RUN pnpm run build
-
-# Expose the port the app runs on
+FROM node:22-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build /app/package.json /app/package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
 EXPOSE 3000
-
-# Start the Next.js application
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]

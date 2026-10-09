@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js CI/CD Lab
 
-## Getting Started
+A small Next.js application used to explore GitHub Actions, dependency caching and container builds. The app itself is the Next.js starter page; the focus is the delivery workflow.
 
-First, run the development server:
+## What is included
+
+- Next.js 15, React 19, TypeScript and Tailwind CSS.
+- A GitHub Actions workflow that installs dependencies and builds on pushes to `main`.
+- A Dockerfile for building and serving the application.
+
+The workflow currently performs a build; it does not deploy to a hosting provider. This is a learning repository, not a production deployment template.
+
+## Run locally
+
+Use Node.js 22 and npm:
 
 ```bash
+git clone https://github.com/TuanCLima/nextjs-ci-cd.git
+cd nextjs-ci-cd
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000). The page lives in `src/app/page.tsx`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build and lint
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run lint
+```
 
-## Learn More
+The build uses `next/font`, which needs access to the Google font service. No application test suite is included.
 
-To learn more about Next.js, take a look at the following resources:
+## Container
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker build -t nextjs-ci-cd .
+docker run --rm -p 3000:3000 nextjs-ci-cd
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The container and Actions workflow use Node.js 22 and the checked-in npm lockfile. No deployment credentials are required for the build job.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [LICENSE](LICENSE).
